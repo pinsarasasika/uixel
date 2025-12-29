@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Loader2, Pencil, Trash2, UploadCloud } from 'lucide-react';
+import { Loader2, Pencil, Trash2, UploadCloud, Plus } from 'lucide-react';
 import { PortfolioProject } from '@/types';
 import Image from 'next/image';
 import {
@@ -24,13 +24,15 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { useFirestore } from '@/firebase';
-import { collection, writeBatch, doc, deleteDoc } from 'firebase/firestore';
+import { collection, writeBatch, doc } from 'firebase/firestore';
 import { samplePortfolioProjects } from '@/lib/sample-data';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { PortfolioForm } from './portfolio-form';
 
 interface AdminPortfolioTableProps {
   projects: PortfolioProject[];
@@ -44,8 +46,10 @@ export function AdminPortfolioTable({
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isSeeding, setIsSeeding] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleSeedDatabase = async () => {
+    if (!firestore) return;
     setIsSeeding(true);
     const projectsCollection = collection(firestore, 'portfolioProjects');
     const batch = writeBatch(firestore);
@@ -69,13 +73,6 @@ export function AdminPortfolioTable({
         requestResourceData: samplePortfolioProjects,
       });
       errorEmitter.emit('permission-error', contextualError);
-
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description:
-          error.message || 'Could not seed the database. Check permissions.',
-      });
     } finally {
       setIsSeeding(false);
     }
@@ -105,7 +102,19 @@ export function AdminPortfolioTable({
           )}
           Seed Sample Projects
         </Button>
-        {/* TODO: Add 'Add New' button here */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" /> Add Project
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Project</DialogTitle>
+            </DialogHeader>
+            <PortfolioForm onSave={() => setIsDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
         </div>
       </div>
       <div className="border rounded-lg">
