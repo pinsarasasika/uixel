@@ -1,18 +1,18 @@
 /**
  * Core Philosophy: This ruleset enforces a strict user-ownership model for most
- * data, but also allows for public collections like the portfolio.
+ * data, but also allows for public collections like the portfolio and store.
  *
  * Data Structure: User-specific data is organized under /users/{userId}. Public
- * data, like portfolio projects, is stored in top-level collections.
+ * data, like portfolio projects and website templates, is stored in top-level collections.
  *
  * Key Security Decisions:
  * - Data Isolation for Users: A user's authentication UID must match the {userId}
  *   wildcard in the document path for any access to their private data.
- * - Public Read for Portfolio: Anyone can read the portfolio projects to view
- *   the site's content.
- * - Admin-Only Writes for Portfolio: Only the authenticated admin user can
- *   create, update, or delete portfolio projects. This is controlled by checking
- *   the request.auth.uid against a known ADMIN_UID.
+ * - Public Read for Portfolio & Store: Anyone can read the portfolio projects and
+ *   website templates to view the site's content.
+ * - Admin-Only Writes: Only the authenticated admin user can create, update, or
+ *   delete public content. This is controlled by checking the request.auth.uid
+ *   against a known ADMIN_UID.
  * - Path-Based Security: Authorization relies on document paths and user UIDs,
  *   avoiding costly `get()` or `exists()` calls in rules.
  */
@@ -42,7 +42,7 @@ service cloud.firestore {
     /**
       * isAdmin
       * Checks if the authenticated user is the designated admin.
-      * IMPORTANT: Replace 'KKCcOLeQVbMklwbsx7sKFs8yTP52' with your actual admin Firebase UID.
+      * IMPORTANT: Replace 'KKCcOLeQVbMklwbsx7sKFs8yTP52' with your actual admin Firebase UID if it changes.
       */
     function isAdmin() {
       return isSignedIn() && request.auth.uid == 'KKCcOLeQVbMklwbsx7sKFs8yTP52';
@@ -53,8 +53,7 @@ service cloud.firestore {
      * isExistingOwner
      * @param userId The user ID from the document path.
      * Checks for ownership and ensures the document already exists before allowing
-     * an update or delete operation. This prevents modifying or deleting documents
-     * that do not exist, which is a security best practice.
+     * an update or delete operation.
      */
     function isExistingOwner(userId) {
       return isOwner(userId) && resource != null;
@@ -64,10 +63,6 @@ service cloud.firestore {
     match /users/{userId} {
       /**
        * @description Secures a user's private collection of contact form submissions.
-       * @path /users/{userId}/contactFormSubmissions/{contactFormSubmissionId}
-       * @allow A logged-in user (delete) their own contact form submission.
-       * @deny A logged-in user (create) a submission for another user.
-       * @principle Restricts access to a user's own data tree.
        */
       match /contactFormSubmissions/{contactFormSubmissionId} {
         allow get: if isOwner(userId);
@@ -79,10 +74,6 @@ service cloud.firestore {
 
       /**
        * @description Secures a user's private collection of SEO optimization data.
-       * @path /users/{userId}/seoOptimizationData/{seoOptimizationDataId}
-       * @allow A logged-in user (get) their own SEO data document.
-       * @deny Any user (update) SEO data for another user.
-       * @principle Restricts access to a user's own data tree.
        */
       match /seoOptimizationData/{seoOptimizationDataId} {
         allow get: if isOwner(userId);
@@ -96,7 +87,6 @@ service cloud.firestore {
     /**
      * @description Publicly readable collection of portfolio projects.
      * Write access is restricted to administrators.
-     * @path /portfolioProjects/{projectId}
      */
     match /portfolioProjects/{projectId} {
       allow read: if true;
@@ -106,7 +96,6 @@ service cloud.firestore {
     /**
      * @description Publicly readable collection of website templates (store products).
      * Write access is restricted to administrators.
-     * @path /websiteTemplates/{templateId}
      */
     match /websiteTemplates/{templateId} {
       allow read: if true;
@@ -114,5 +103,3 @@ service cloud.firestore {
     }
   }
 }
-
-    
