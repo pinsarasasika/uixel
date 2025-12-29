@@ -1,3 +1,76 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "portfolio-1",
+      "description": "Abstract web design project",
+      "imageUrl": "https://images.unsplash.com/photo-1678931546577-44a83b3219cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhYnN0cmFjdCUyMHdlYnNpdGV8ZW58MHx8fHwxNzY3MDM1NTI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract website"
+    },
+    {
+      "id": "portfolio-2",
+      "description": "Sleek mobile app UI/UX design",
+      "imageUrl": "https://images.unsplash.com/photo-1752055340594-4eb0eda11a64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhcHAlMjBpbnRlcmZhY2V8ZW58MHx8fHwxNzY3MDI3NTgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "app interface"
+    },
+    {
+      "id": "portfolio-3",
+      "description": "AI data visualization dashboard",
+      "imageUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkYXRhJTIwZGFzaGJvYXJkfGVufDB8fHx8MTc2NzAwNjY5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data dashboard"
+    },
+    {
+      "id": "portfolio-4",
+      "description": "Modern branding for a tech company",
+      "imageUrl": "https://images.unsplash.com/photo-1762417582263-7f423d344b77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtb2Rlcm4lMjBicmFuZGluZ3xlbnwwfHx8fDE3NjcwMzU1Mjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern branding"
+    },
+    {
+      "id": "portfolio-5",
+      "description": "E-commerce website development",
+      "imageUrl": "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxlY29tbWVyY2UlMjB3ZWJzaXRlfGVufDB8fHx8MTc2NzAyNDMyOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ecommerce website"
+    },
+    {
+      "id": "portfolio-6",
+      "description": "Futuristic UI concept",
+      "imageUrl": "https://images.unsplash.com/photo-1720962158802-f80b1e855e03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmdXR1cmlzdGljJTIwdWl8ZW58MHx8fHwxNzY3MDM1NTI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "futuristic ui"
+    },
+    {
+      "id": "product-1",
+      "description": "Minimalist portfolio template",
+      "imageUrl": "https://images.unsplash.com/photo-1644145876127-c189b84fc70f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3ZWJzaXRlJTIwdGVtcGxhdGV8ZW58MHx8fHwxNzY2OTc5NTY3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "website template"
+    },
+    {
+      "id": "product-2",
+      "description": "SaaS dashboard template",
+      "imageUrl": "https://images.unsplash.com/photo-1563753159011-f1d8b8272c8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGFzaGJvYXJkJTIwdGVtcGxhdGV8ZW58MHx8fHwxNzY3MDM1NTI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dashboard template"
+    },
+    {
+      "id": "product-3",
+      "description": "Creative agency template",
+      "imageUrl": "https://images.unsplash.com/photo-1627634777217-c864268db30c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhZ2VuY3klMjB3ZWJzaXRlfGVufDB8fHx8MTc2NzAzNTUyNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "agency website"
+    },
+    {
+      "id": "product-4",
+      "description": "E-commerce store template",
+      "imageUrl": "https://images.unsplash.com/photo-1487014679447-9f8336841d58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxvbmxpbmUlMjBzdG9yZXxlbnwwfHx8fDE3NjcwMDczODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "online store"
+    },
+    {
+      "id": "about-hero",
+      "description": "Team collaborating in a modern office",
+      "imageUrl": "https://images.unsplash.com/photo-1531545514256-b1400bc00f31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8dGVhbSUyMGNvbGxhYm9yYXRpb258ZW58MHx8fHwxNzY2OTc1ODQ5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "team collaboration"
+    },
+    {
+      "id": "contact-hero",
+      "description": "Abstract network connections graphic",
+      "imageUrl": "https://images.unsplash.com/photo-1644325349124-d1756b79dd42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxuZXR3b3JrJTIwY29ubmVjdGlvbnN8ZW58MHx8fHwxNzY2OTM1NTQyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "network connections"
+    }
+  ]
 }
