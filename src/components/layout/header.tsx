@@ -1,36 +1,38 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Menu, Sparkles, X, LogIn, LogOut } from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useAuth, useUser } from "@/firebase";
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { ADMIN_UID } from "@/lib/constants";
+import Link from 'next/link';
+import { Menu, Sparkles, X, LogIn, LogOut } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useAuth, useUser } from '@/firebase';
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { ADMIN_UID } from '@/lib/constants';
+import { useSearchParams } from 'next/navigation';
 
 const navLinks = [
-  { href: "/services", label: "Services" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/store", label: "Store" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-  { href: "/seo-tool", label: "SEO Tool" },
+  { href: '/services', label: 'Services' },
+  { href: '/portfolio', label: 'Portfolio' },
+  { href: '/store', label: 'Store' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/seo-tool', label: 'SEO Tool' },
 ];
 
-export function SiteHeader() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+function AuthButton() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const searchParams = useSearchParams();
+  const isAdminLogin = searchParams.has('admin');
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error("Error signing in with Google", error);
+      console.error('Error signing in with Google', error);
     }
   };
 
@@ -38,11 +40,43 @@ export function SiteHeader() {
     try {
       await signOut(auth);
     } catch (error) {
-      console.error("Error signing out", error);
+      console.error('Error signing out', error);
     }
   };
+  
+  if (isUserLoading) {
+    return <div className="h-9 w-24 animate-pulse rounded-md bg-muted" />;
+  }
 
-  const filteredNavLinks = navLinks.concat(user && user.uid === ADMIN_UID ? [{ href: "/admin", label: "Admin" }] : []);
+  if (user) {
+    return (
+      <Button variant="ghost" size="sm" onClick={handleSignOut}>
+        <LogOut className="mr-2" /> Sign Out
+      </Button>
+    );
+  }
+
+  if (isAdminLogin) {
+    return (
+      <Button variant="ghost" size="sm" onClick={handleGoogleSignIn}>
+        <LogIn className="mr-2" /> Sign In
+      </Button>
+    );
+  }
+
+  return (
+    <Button asChild size="sm">
+      <Link href="/contact">Let's Start</Link>
+    </Button>
+  );
+}
+
+
+export function SiteHeader() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user } = useUser();
+
+  const filteredNavLinks = navLinks.concat(user && user.uid === ADMIN_UID ? [{ href: '/admin', label: 'Admin' }] : []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -64,17 +98,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <ThemeToggle />
-          {isUserLoading ? (
-            <div className="h-9 w-20 animate-pulse rounded-md bg-muted" />
-          ) : user ? (
-            <Button variant="ghost" size="sm" onClick={handleSignOut}>
-              <LogOut className="mr-2" /> Sign Out
-            </Button>
-          ) : (
-            <Button variant="ghost" size="sm" onClick={handleGoogleSignIn}>
-              <LogIn className="mr-2" /> Sign In
-            </Button>
-          )}
+          <AuthButton />
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
