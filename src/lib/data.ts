@@ -8,6 +8,20 @@ const findImage = (id: string) => {
         // Fallback or error handling
         return { id: 'fallback', src: 'https://picsum.photos/seed/fallback/600/400', width: 600, height: 400, hint: 'abstract' };
     }
+    
+    if (image.imageUrl.includes('images.unsplash.com')) {
+        const url = new URL(image.imageUrl);
+        const width = parseInt(url.searchParams.get('w') || '1080');
+        const height = parseInt(url.searchParams.get('h') || '800'); // Assuming a default if not present
+        return {
+            id: image.id,
+            src: image.imageUrl,
+            width: width,
+            height: height,
+            hint: image.imageHint,
+        };
+    }
+
     const urlParts = image.imageUrl.split('/');
     const width = urlParts[urlParts.length - 2];
     const height = urlParts[urlParts.length - 1];
