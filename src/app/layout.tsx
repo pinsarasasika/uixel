@@ -6,6 +6,7 @@ import { SiteHeader } from '@/components/layout/header';
 import { SiteFooter } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { BackgroundGlow } from '@/components/background-glow';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: 'UIXEL Digital - Designing the Future of Digital Experiences',
@@ -26,13 +27,15 @@ export default function RootLayout({
       </head>
       <body className={cn('min-h-screen bg-background font-body antialiased')}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <div className="relative flex min-h-screen flex-col">
-            <BackgroundGlow />
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </div>
-          <Toaster />
+          <FirebaseClientProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <BackgroundGlow />
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </div>
+            <Toaster />
+          </FirebaseClientProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,17 +1,23 @@
+"use client";
+
+import { useUser } from "@/firebase";
+import { ADMIN_UID } from "@/lib/constants";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { portfolioProjects, services, storeProducts } from "@/lib/data";
-import { Briefcase, Package, Sparkles, Users } from "lucide-react";
+import { Briefcase, Package, Sparkles, Users, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-// This is mock data. In a real app, you'd fetch this from your database.
 const recentSubmissions = [
     { id: 1, name: "John Doe", email: "john@example.com", message: "Interested in web development services.", submittedAt: "2024-07-28" },
     { id: 2, name: "Jane Smith", email: "jane@example.com", message: "Question about the 'Minima' template.", submittedAt: "2024-07-27" },
     { id: 3, name: "Peter Jones", email: "peter@example.com", message: "Let's talk about a new branding project.", submittedAt: "2024-07-26" },
 ];
 
-
-export default function AdminPage() {
+function AdminDashboard() {
   return (
     <div className="container py-12 md:py-16">
       <div className="mb-12">
@@ -91,4 +97,27 @@ export default function AdminPage() {
       </div>
     </div>
   );
+}
+
+
+export default function AdminPage() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && (!user || user.uid !== ADMIN_UID)) {
+      router.replace('/login?redirect=/admin');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user || user.uid !== ADMIN_UID) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]">
+        <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
+        <p className="text-lg text-muted-foreground">Verifying access...</p>
+      </div>
+    );
+  }
+
+  return <AdminDashboard />;
 }

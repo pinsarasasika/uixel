@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Sparkles, X } from "lucide-react";
+import { Menu, Sparkles, X, LogIn, LogOut } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth, useUser } from "@/firebase";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { ADMIN_UID } from "@/lib/constants";
 
 const navLinks = [
   { href: "/services", label: "Services" },
@@ -15,11 +18,31 @@ const navLinks = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
   { href: "/seo-tool", label: "SEO Tool" },
-  { href: "/admin", label: "Admin" },
 ];
 
 export function SiteHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Error signing in with Google", error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out", error);
+    }
+  };
+
+  const filteredNavLinks = navLinks.concat(user && user.uid === ADMIN_UID ? [{ href: "/admin", label: "Admin" }] : []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -29,7 +52,7 @@ export function SiteHeader() {
           <span className="font-bold">UIXEL</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm md:flex">
-          {navLinks.map((link) => (
+          {filteredNavLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -39,11 +62,19 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex flex-1 items-center justify-end space-x-2">
           <ThemeToggle />
-          <Button className="hidden sm:inline-flex" asChild>
-            <Link href="/contact">Get Started</Link>
-          </Button>
+          {isUserLoading ? (
+            <div className="h-9 w-20 animate-pulse rounded-md bg-muted" />
+          ) : user ? (
+            <Button variant="ghost" size="sm" onClick={handleSignOut}>
+              <LogOut className="mr-2" /> Sign Out
+            </Button>
+          ) : (
+            <Button variant="ghost" size="sm" onClick={handleGoogleSignIn}>
+              <LogIn className="mr-2" /> Sign In
+            </Button>
+          )}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -60,7 +91,7 @@ export function SiteHeader() {
                     </Link>
                 </div>
                 <nav className="flex flex-col gap-4 mt-8">
-                  {navLinks.map((link) => (
+                  {filteredNavLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
