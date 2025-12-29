@@ -6,7 +6,6 @@ import { ProductSection } from '@/components/store/product-section';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { PortfolioProject } from '@/types';
 import { collection } from 'firebase/firestore';
-import { useMemo } from 'react';
 import { Loader2 } from 'lucide-react';
 
 export default function Home() {

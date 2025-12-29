@@ -6,10 +6,9 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useDoc, useFirestore } from "@/firebase";
+import { useDoc, useFirestore, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { Loader2 } from "lucide-react";
-import { useMemo } from "react";
 import { PortfolioProject } from "@/types";
 
 export default function ProjectDetailPage({
@@ -18,7 +17,7 @@ export default function ProjectDetailPage({
   params: { id: string };
 }) {
   const firestore = useFirestore();
-  const projectRef = useMemo(
+  const projectRef = useMemoFirebase(
     () => (firestore ? doc(firestore, "portfolioProjects", params.id) : null),
     [firestore, params.id]
   );
