@@ -1,23 +1,62 @@
-"use client";
+'use client';
 
-import { useUser } from "@/firebase";
-import { ADMIN_UID } from "@/lib/constants";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { portfolioProjects, services, storeProducts } from "@/lib/data";
-import { Briefcase, Package, Sparkles, Users, Loader2 } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
+import { ADMIN_UID } from '@/lib/constants';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { services, storeProducts } from '@/lib/data';
+import { Briefcase, Package, Sparkles, Loader2 } from 'lucide-react';
+import { collection } from 'firebase/firestore';
+import { PortfolioProject } from '@/types';
+import { AdminPortfolioTable } from '@/components/admin/admin-portfolio-table';
 
 const recentSubmissions = [
-    { id: 1, name: "John Doe", email: "john@example.com", message: "Interested in web development services.", submittedAt: "2024-07-28" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", message: "Question about the 'Minima' template.", submittedAt: "2024-07-27" },
-    { id: 3, name: "Peter Jones", email: "peter@example.com", message: "Let's talk about a new branding project.", submittedAt: "2024-07-26" },
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john@example.com',
+    message: 'Interested in web development services.',
+    submittedAt: '2024-07-28',
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    message: "Question about the 'Minima' template.",
+    submittedAt: '2024-07-27',
+  },
+  {
+    id: 3,
+    name: 'Peter Jones',
+    email: 'peter@example.com',
+    message: "Let's talk about a new branding project.",
+    submittedAt: '2024-07-26',
+  },
 ];
 
 function AdminDashboard() {
+  const firestore = useFirestore();
+  const portfolioProjectsCollection = useMemoFirebase(
+    () => (firestore ? collection(firestore, 'portfolioProjects') : null),
+    [firestore]
+  );
+  const { data: portfolioProjects, isLoading: isLoadingProjects } =
+    useCollection<PortfolioProject>(portfolioProjectsCollection);
+
   return (
     <div className="container py-12 md:py-16">
       <div className="mb-12">
@@ -36,7 +75,13 @@ function AdminDashboard() {
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{portfolioProjects.length}</div>
+            {isLoadingProjects ? (
+              <Loader2 className="h-6 w-6 animate-spin" />
+            ) : (
+              <div className="text-2xl font-bold">
+                {portfolioProjects?.length ?? 0}
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">
               Total projects showcased
             </p>
@@ -44,9 +89,7 @@ function AdminDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Store Products
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Store Products</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -58,7 +101,9 @@ function AdminDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Services Offered</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Services Offered
+            </CardTitle>
             <Sparkles className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -69,36 +114,45 @@ function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-      
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Recent Contact Submissions</h2>
-         <Card>
+
+      <div className="space-y-12">
+        <AdminPortfolioTable projects={portfolioProjects || []} isLoading={isLoadingProjects} />
+
+        <div>
+          <h2 className="text-2xl font-bold mb-4">
+            Recent Contact Submissions
+          </h2>
+          <Card>
             <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Message</TableHead>
-                        <TableHead>Date</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {recentSubmissions.map((submission) => (
-                        <TableRow key={submission.id}>
-                            <TableCell className="font-medium">{submission.name}</TableCell>
-                            <TableCell>{submission.email}</TableCell>
-                            <TableCell className="max-w-xs truncate">{submission.message}</TableCell>
-                            <TableCell>{submission.submittedAt}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Message</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentSubmissions.map(submission => (
+                  <TableRow key={submission.id}>
+                    <TableCell className="font-medium">
+                      {submission.name}
+                    </TableCell>
+                    <TableCell>{submission.email}</TableCell>
+                    <TableCell className="max-w-xs truncate">
+                      {submission.message}
+                    </TableCell>
+                    <TableCell>{submission.submittedAt}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
             </Table>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
 }
-
 
 export default function AdminPage() {
   const { user, isUserLoading } = useUser();
