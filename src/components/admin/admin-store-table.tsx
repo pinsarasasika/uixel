@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Loader2, Pencil, Trash2, UploadCloud } from 'lucide-react';
+import { Loader2, Pencil, Trash2, UploadCloud, Plus } from 'lucide-react';
 import { WebsiteTemplate } from '@/types';
 import Image from 'next/image';
 import {
@@ -31,6 +31,8 @@ import { useState } from 'react';
 import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ProductForm } from './product-form';
 
 interface AdminStoreTableProps {
   products: WebsiteTemplate[];
@@ -44,6 +46,7 @@ export function AdminStoreTable({
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isSeeding, setIsSeeding] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleSeedDatabase = async () => {
     setIsSeeding(true);
@@ -106,7 +109,19 @@ export function AdminStoreTable({
           )}
           Seed Sample Products
         </Button>
-        {/* TODO: Add 'Add New' button here */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" /> Add Product
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Product</DialogTitle>
+            </DialogHeader>
+            <ProductForm onSave={() => setIsDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
         </div>
       </div>
       <div className="border rounded-lg">
