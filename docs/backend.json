@@ -172,18 +172,14 @@
   "firestore": {
     "structure": [
       {
-        "path": "/users/{userId}/websiteTemplates/{websiteTemplateId}",
+        "path": "/websiteTemplates/{websiteTemplateId}",
         "definition": {
           "entityName": "WebsiteTemplate",
           "schema": {
             "$ref": "#/backend/entities/WebsiteTemplate"
           },
-          "description": "Stores website templates created by each user. Accessible only to the user with the matching userId.",
+          "description": "Stores all website templates available in the store. Publicly readable, but only writable by admins.",
           "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
             {
               "name": "websiteTemplateId",
               "description": "The unique identifier of the website template."
@@ -192,18 +188,14 @@
         }
       },
       {
-        "path": "/users/{userId}/portfolioProjects/{portfolioProjectId}",
+        "path": "/portfolioProjects/{portfolioProjectId}",
         "definition": {
           "entityName": "PortfolioProject",
           "schema": {
             "$ref": "#/backend/entities/PortfolioProject"
           },
-          "description": "Stores portfolio projects created by each user. Accessible only to the user with the matching userId.",
+          "description": "Stores all portfolio projects for public display. Writable only by admins.",
           "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
             {
               "name": "portfolioProjectId",
               "description": "The unique identifier of the portfolio project."
@@ -255,3 +247,5 @@
     "reasoning": "The Firestore structure is designed to manage website templates, portfolio projects, contact form submissions, and SEO optimization data for the UIXEL Digital agency. The structure prioritizes authorization independence and simplifies security rules based on the user's request to only show each entity to that specific user. Private data is managed through path-based ownership. Each entity is stored under the `/users/{userId}` collection, ensuring that only the authenticated user can access their data.\n\n1.  **Website Templates:** Each user can create and manage their website templates under `/users/{userId}/websiteTemplates/{websiteTemplateId}`. This ensures that only the user who created the template can access it. The `websiteTemplates` collection stores all templates created by a specific user.\n\n2.  **Portfolio Projects:** Each user's portfolio projects are stored under `/users/{userId}/portfolioProjects/{portfolioProjectId}`. This allows each user to manage their portfolio items independently.\n\n3.  **Contact Form Submissions:** Contact form submissions are stored under `/users/{userId}/contactFormSubmissions/{contactFormSubmissionId}`. Although in a real application, these submissions would likely be accessible to administrators or specific support roles, this structure restricts access solely to the user, fulfilling the specific requirement.\n\n4. **SEO Optimization Data**: Each user's SEO data is stored under `/users/{userId}/seoOptimizationData/{seoOptimizationDataId}`. This structure allows each user to create and manage their SEO optimization independently.\n\nThis structure achieves authorization independence by ensuring that access control is solely based on the user's ID in the path. There are no `get()` calls needed in the security rules to validate access. QAPs (Rules are not Filters) are supported because each collection contains data that can be securely listed based on the path-based ownership."
   }
 }
+
+    

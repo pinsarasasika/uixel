@@ -4,7 +4,7 @@ import { ServicesSection } from '@/components/sections/services-section';
 import { PortfolioSection } from '@/components/portfolio/portfolio-section';
 import { ProductSection } from '@/components/store/product-section';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { PortfolioProject } from '@/types';
+import { PortfolioProject, WebsiteTemplate } from '@/types';
 import { collection } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 
@@ -14,10 +14,17 @@ export default function Home() {
     () => (firestore ? collection(firestore, "portfolioProjects") : null),
     [firestore]
   );
-  const { data: portfolioProjects, isLoading } =
+  const { data: portfolioProjects, isLoading: isLoadingProjects } =
     useCollection<PortfolioProject>(projectsCollection);
 
-  if (isLoading) {
+  const productsCollection = useMemoFirebase(
+    () => (firestore ? collection(firestore, "websiteTemplates") : null),
+    [firestore]
+  );
+  const { data: storeProducts, isLoading: isLoadingProducts } =
+    useCollection<WebsiteTemplate>(productsCollection);
+
+  if (isLoadingProjects || isLoadingProducts) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader2 className="w-12 h-12 animate-spin text-primary" />
@@ -30,7 +37,7 @@ export default function Home() {
       <HeroSection />
       <ServicesSection />
       <PortfolioSection isPreview={true} projects={portfolioProjects || []} />
-      <ProductSection isPreview={true} />
+      <ProductSection isPreview={true} products={storeProducts || []} />
     </div>
   );
 }

@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Product } from "@/types";
+import type { WebsiteTemplate } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 
 type ProductCardProps = {
-  product: Product;
+  product: WebsiteTemplate;
 };
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -15,17 +15,16 @@ export function ProductCard({ product }: ProductCardProps) {
     <Card className="flex flex-col overflow-hidden rounded-2xl bg-background/50 border-primary/10 transition-all duration-300 hover:shadow-xl hover:border-primary/30">
         <div className="relative overflow-hidden">
             <Image
-                src={product.image.src}
-                alt={product.title}
-                width={product.image.width}
-                height={product.image.height}
-                data-ai-hint={product.image.hint}
+                src={product.imageUrl}
+                alt={product.name}
+                width={600}
+                height={400}
                 className="w-full h-auto object-cover"
             />
         </div>
         <CardHeader>
             <div className="flex justify-between items-start">
-                <CardTitle className="text-xl font-bold">{product.title}</CardTitle>
+                <CardTitle className="text-xl font-bold">{product.name}</CardTitle>
                 <Badge variant="default" className="bg-primary/20 text-primary border-primary/30">${product.price}</Badge>
             </div>
         </CardHeader>
@@ -45,3 +44,5 @@ export function ProductCard({ product }: ProductCardProps) {
     </Card>
   );
 }
+
+    

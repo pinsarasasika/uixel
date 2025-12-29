@@ -17,17 +17,14 @@ export type PortfolioProject = {
   projectUrl: string;
 };
 
-export type Product = {
-  id:string;
-  title: string;
+export type WebsiteTemplate = {
+  id: string;
+  name: string;
   description: string;
   price: number;
-  image: {
-    id: string;
-    src: string;
-    width: number;
-    height: number;
-    hint: string;
-  };
+  imageUrl: string;
   livePreviewUrl: string;
-}
+  category: string;
+};
+
+    

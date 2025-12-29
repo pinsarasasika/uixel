@@ -1,5 +1,4 @@
-
-import type { PortfolioProject } from '@/types';
+import type { PortfolioProject, WebsiteTemplate } from '@/types';
 
 // A curated list of sample portfolio projects to showcase different skills.
 export const samplePortfolioProjects: Omit<PortfolioProject, 'id'>[] = [
@@ -49,3 +48,44 @@ export const samplePortfolioProjects: Omit<PortfolioProject, 'id'>[] = [
     projectUrl: '#',
   },
 ];
+
+export const sampleStoreProducts: Omit<WebsiteTemplate, 'id'>[] = [
+  {
+    name: 'Minima',
+    description: 'A clean and minimalist portfolio template for creatives.',
+    price: 49,
+    imageUrl:
+      'https://images.unsplash.com/photo-1644145876127-c189b84fc70f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3ZWJzaXRlJTIwdGVtcGxhdGV8ZW58MHx8fHwxNzY2OTc5NTY3fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    livePreviewUrl: '#',
+    category: 'Portfolio',
+  },
+  {
+    name: 'Dashly',
+    description: 'A feature-rich dashboard UI kit for SaaS applications.',
+    price: 79,
+    imageUrl:
+      'https://images.unsplash.com/photo-1563753159011-f1d8b8272c8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGFzaGJvYXJkJTIwdGVtcGxhdGV8ZW58MHx8fHwxNzY3MDM1NTI2fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    livePreviewUrl: '#',
+    category: 'SaaS',
+  },
+  {
+    name: 'Agency X',
+    description: 'A bold and modern template for digital agencies.',
+    price: 69,
+    imageUrl:
+      'https://images.unsplash.com/photo-1627634777217-c864268db30c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhZ2VuY3klMjB3ZWJzaXRlfGVufDB8fHx8MTc2NzAzNTUyNnww&ixlib=rb-4.1.0&q=80&w=1080',
+    livePreviewUrl: '#',
+    category: 'Agency',
+  },
+  {
+    name: 'Shopify Pro',
+    description: 'A premium e-commerce template for fashion brands.',
+    price: 99,
+    imageUrl:
+      'https://images.unsplash.com/photo-1487014679447-9f8336841d58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxvbmxpbmUlMjBzdG9yZXxlbnwwfHx8fDE3NjcwMDczODd8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    livePreviewUrl: '#',
+    category: 'E-commerce',
+  },
+];
+
+    

@@ -1,11 +1,11 @@
-import { storeProducts } from "@/lib/data";
+import { WebsiteTemplate } from "@/types";
 import { ProductCard } from "./product-card";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-export function ProductSection({ isPreview = false }: { isPreview?: boolean }) {
-  const productsToShow = isPreview ? storeProducts.slice(0, 3) : storeProducts;
+export function ProductSection({ isPreview = false, products = [] }: { isPreview?: boolean, products: WebsiteTemplate[] }) {
+  const productsToShow = isPreview ? products.slice(0, 3) : products;
 
   return (
     <section className="container py-20 md:py-24">

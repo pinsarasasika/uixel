@@ -18,11 +18,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { services, storeProducts } from '@/lib/data';
+import { services } from '@/lib/data';
 import { Briefcase, Package, Sparkles, Loader2 } from 'lucide-react';
 import { collection } from 'firebase/firestore';
-import { PortfolioProject } from '@/types';
+import { PortfolioProject, WebsiteTemplate } from '@/types';
 import { AdminPortfolioTable } from '@/components/admin/admin-portfolio-table';
+import { AdminStoreTable } from '@/components/admin/admin-store-table';
 
 const recentSubmissions = [
   {
@@ -56,6 +57,14 @@ function AdminDashboard() {
   );
   const { data: portfolioProjects, isLoading: isLoadingProjects } =
     useCollection<PortfolioProject>(portfolioProjectsCollection);
+
+  const storeProductsCollection = useMemoFirebase(
+    () => (firestore ? collection(firestore, 'websiteTemplates') : null),
+    [firestore]
+  );
+  const { data: storeProducts, isLoading: isLoadingProducts } =
+    useCollection<WebsiteTemplate>(storeProductsCollection);
+
 
   return (
     <div className="container py-12 md:py-16">
@@ -93,7 +102,13 @@ function AdminDashboard() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{storeProducts.length}</div>
+             {isLoadingProducts ? (
+              <Loader2 className="h-6 w-6 animate-spin" />
+            ) : (
+              <div className="text-2xl font-bold">
+                {storeProducts?.length ?? 0}
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">
               Total products in store
             </p>
@@ -117,6 +132,7 @@ function AdminDashboard() {
 
       <div className="space-y-12">
         <AdminPortfolioTable projects={portfolioProjects || []} isLoading={isLoadingProjects} />
+        <AdminStoreTable products={storeProducts || []} isLoading={isLoadingProducts} />
 
         <div>
           <h2 className="text-2xl font-bold mb-4">
@@ -175,3 +191,5 @@ export default function AdminPage() {
 
   return <AdminDashboard />;
 }
+
+    

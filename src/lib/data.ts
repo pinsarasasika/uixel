@@ -1,39 +1,6 @@
 import { BrainCircuit, Code, Palette, PenTool, Sparkles, TrendingUp } from "lucide-react";
-import type { Service, Product } from "@/types";
+import type { Service } from "@/types";
 import { PlaceHolderImages } from "./placeholder-images";
-
-const findImage = (id: string) => {
-    const image = PlaceHolderImages.find(img => img.id === id);
-    if (!image) {
-        // Fallback or error handling
-        return { id: 'fallback', src: 'https://picsum.photos/seed/fallback/600/400', width: 600, height: 400, hint: 'abstract' };
-    }
-    
-    if (image.imageUrl.includes('images.unsplash.com')) {
-        const url = new URL(image.imageUrl);
-        const width = parseInt(url.searchParams.get('w') || '600');
-        const height = parseInt(url.searchParams.get('h') || '400');
-        return {
-            id: image.id,
-            src: image.imageUrl,
-            width: width,
-            height: height,
-            hint: image.imageHint,
-        };
-    }
-
-    const urlParts = image.imageUrl.split('/');
-    const width = parseInt(urlParts[urlParts.length - 2]);
-    const height = parseInt(urlParts[urlParts.length - 1]);
-    
-    return {
-        id: image.id,
-        src: image.imageUrl,
-        width: width,
-        height: height,
-        hint: image.imageHint,
-    };
-};
 
 export const services: Service[] = [
     {
@@ -68,9 +35,4 @@ export const services: Service[] = [
     },
 ];
 
-export const storeProducts: Product[] = [
-    { id: "prod-1", title: "Minima", description: "A clean and minimalist portfolio template for creatives.", price: 49, image: findImage('product-1'), livePreviewUrl: "#" },
-    { id: "prod-2", title: "Dashly", description: "A feature-rich dashboard UI kit for SaaS applications.", price: 79, image: findImage('product-2'), livePreviewUrl: "#" },
-    { id: "prod-3", title: "Agency X", description: "A bold and modern template for digital agencies.", price: 69, image: findImage('product-3'), livePreviewUrl: "#" },
-    { id: "prod-4", title: "Shopify Pro", description: "A premium e-commerce template for fashion brands.", price: 99, image: findImage('product-4'), livePreviewUrl: "#" },
-]
+    
