@@ -105,18 +105,37 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isUserLoading && (!user || user.uid !== ADMIN_UID)) {
-      router.replace('/login?redirect=/admin');
-    }
+    // Temporarily disabled to prevent redirect loop
+    // if (!isUserLoading && (!user || user.uid !== ADMIN_UID)) {
+    //   router.replace('/login?redirect=/admin');
+    // }
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || !user || user.uid !== ADMIN_UID) {
+  if (isUserLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]">
         <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
         <p className="text-lg text-muted-foreground">Verifying access...</p>
       </div>
     );
+  }
+
+  if (!user || user.uid !== ADMIN_UID) {
+    return (
+        <div className="container py-12 md:py-16 text-center">
+            <h1 className="text-3xl font-bold text-destructive">Access Denied</h1>
+            <p className="text-lg text-muted-foreground mt-4">
+                You are not authorized to view this page. Please sign in with an admin account.
+            </p>
+            <p className="text-sm text-muted-foreground mt-8">
+                Your UID: {user?.uid || 'Not signed in'}
+            </p>
+             <p className="text-sm text-muted-foreground mt-2">
+                Required UID: {ADMIN_UID}
+            </p>
+            <Button onClick={() => router.push('/login?redirect=/admin')} className="mt-8">Sign In</Button>
+        </div>
+    )
   }
 
   return <AdminDashboard />;
