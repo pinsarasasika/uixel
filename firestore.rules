@@ -1,24 +1,20 @@
 /**
- * Core Philosophy: This ruleset enforces a strict user-ownership model where all
- * data is siloed per user. The security model is designed to be simple, secure,
- * and performant by ensuring that a user can only ever access data that exists
- * within their own dedicated data tree.
+ * Core Philosophy: This ruleset enforces a strict user-ownership model for most
+ * data, but also allows for public collections like the portfolio.
  *
- * Data Structure: All application data is organized hierarchically under a top-level
- * 'users' collection. Each user's data, including website templates, portfolio projects,
- * contact submissions, and SEO data, is stored in separate subcollections under their
- * unique user ID document path (e.g., /users/{userId}/<subcollection>/{docId}).
+ * Data Structure: User-specific data is organized under /users/{userId}. Public
+ * data, like portfolio projects, is stored in top-level collections.
  *
  * Key Security Decisions:
- * - Strict Data Isolation: A user's authentication UID must match the {userId}
- *   wildcard in the document path for any access to be granted. This prevents any
- *   user from accessing another user's data.
- * - No User Listing: The rules do not allow for listing documents in the top-level
- *   'users' collection, protecting user privacy.
- * - No Public Data: There are no publicly readable collections. All access requires
- *   user authentication.
- * - Path-Based Security: Authorization relies solely on the document path, which
- *   avoids the need for slow and costly `get()` or `exists()` calls to other documents.
+ * - Data Isolation for Users: A user's authentication UID must match the {userId}
+ *   wildcard in the document path for any access to their private data.
+ * - Public Read for Portfolio: Anyone can read the portfolio projects to view
+ *   the site's content.
+ * - Admin-Only Writes for Portfolio: Only the authenticated admin user can
+ *   create, update, or delete portfolio projects. This is controlled by checking
+ *   the request.auth.uid against a known ADMIN_UID.
+ * - Path-Based Security: Authorization relies on document paths and user UIDs,
+ *   avoiding costly `get()` or `exists()` calls in rules.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -42,6 +38,16 @@ service cloud.firestore {
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
+    
+    /**
+      * isAdmin
+      * Checks if the authenticated user is the designated admin.
+      * IMPORTANT: Replace 'KKCcOLeQVbMklwbsx7sKFs8yTP52' with your actual admin Firebase UID.
+      */
+    function isAdmin() {
+      return isSignedIn() && request.auth.uid == 'KKCcOLeQVbMklwbsx7sKFs8yTP52';
+    }
+
 
     /**
      * isExistingOwner
@@ -65,21 +71,6 @@ service cloud.firestore {
        * @principle Restricts access to a user's own data tree.
        */
       match /websiteTemplates/{websiteTemplateId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update: if isExistingOwner(userId);
-        allow delete: if isExistingOwner(userId);
-      }
-
-      /**
-       * @description Secures a user's private collection of portfolio projects.
-       * @path /users/{userId}/portfolioProjects/{portfolioProjectId}
-       * @allow A logged-in user (update) their own portfolio project.
-       * @deny An anonymous user (list) any portfolio projects.
-       * @principle Restricts access to a user's own data tree.
-       */
-      match /portfolioProjects/{portfolioProjectId} {
         allow get: if isOwner(userId);
         allow list: if isOwner(userId);
         allow create: if isOwner(userId);
@@ -116,6 +107,16 @@ service cloud.firestore {
         allow update: if isExistingOwner(userId);
         allow delete: if isExistingOwner(userId);
       }
+    }
+    
+    /**
+     * @description Publicly readable collection of portfolio projects.
+     * Write access is restricted to administrators.
+     * @path /portfolioProjects/{projectId}
+     */
+    match /portfolioProjects/{projectId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }
