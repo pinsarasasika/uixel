@@ -26,7 +26,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col gap-20 md:gap-32">
+    <div className="flex flex-col gap-16 md:gap-24">
       <HeroSection />
       <ServicesSection />
       <PortfolioSection isPreview={true} projects={portfolioProjects || []} />
