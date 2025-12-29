@@ -8,18 +8,13 @@ export type Service = {
 
 export type ProjectCategory = "Web" | "UI/UX" | "AI" | "Branding";
 
-export type Project = {
+export type PortfolioProject = {
   id: string;
   title: string;
   description: string;
   category: ProjectCategory;
-  image: {
-    id: string;
-    src: string;
-    width: number;
-    height: number;
-    hint: string;
-  };
+  imageUrl: string;
+  projectUrl: string;
 };
 
 export type Product = {

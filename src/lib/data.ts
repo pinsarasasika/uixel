@@ -1,5 +1,5 @@
 import { BrainCircuit, Code, Palette, PenTool, Sparkles, TrendingUp } from "lucide-react";
-import type { Service, Project, Product, ProjectCategory } from "@/types";
+import type { Service, Product } from "@/types";
 import { PlaceHolderImages } from "./placeholder-images";
 
 const findImage = (id: string) => {
@@ -11,8 +11,8 @@ const findImage = (id: string) => {
     
     if (image.imageUrl.includes('images.unsplash.com')) {
         const url = new URL(image.imageUrl);
-        const width = parseInt(url.searchParams.get('w') || '1080');
-        const height = parseInt(url.searchParams.get('h') || '800'); // Assuming a default if not present
+        const width = parseInt(url.searchParams.get('w') || '600');
+        const height = parseInt(url.searchParams.get('h') || '400');
         return {
             id: image.id,
             src: image.imageUrl,
@@ -23,14 +23,14 @@ const findImage = (id: string) => {
     }
 
     const urlParts = image.imageUrl.split('/');
-    const width = urlParts[urlParts.length - 2];
-    const height = urlParts[urlParts.length - 1];
+    const width = parseInt(urlParts[urlParts.length - 2]);
+    const height = parseInt(urlParts[urlParts.length - 1]);
     
     return {
         id: image.id,
         src: image.imageUrl,
-        width: parseInt(width),
-        height: parseInt(height),
+        width: width,
+        height: height,
         hint: image.imageHint,
     };
 };
@@ -66,15 +66,6 @@ export const services: Service[] = [
         title: "Brand Identity",
         description: "Creating memorable brand identities that resonate with your target audience.",
     },
-];
-
-export const portfolioProjects: Project[] = [
-    { id: "proj-1", title: "QuantumLeap", description: "A futuristic web platform for a leading tech innovator.", category: "Web", image: findImage('portfolio-1') },
-    { id: "proj-2", title: "Aura Finance", description: "A sleek mobile banking app with a focus on user experience.", category: "UI/UX", image: findImage('portfolio-2') },
-    { id: "proj-3", title: "Synapse AI", description: "An analytics dashboard powered by machine learning insights.", category: "AI", image: findImage('portfolio-3') },
-    { id: "proj-4", title: "Nova Branding", description: "A complete brand identity overhaul for a space-tech startup.", category: "Branding", image: findImage('portfolio-4') },
-    { id: "proj-5", title: "Zenith Commerce", description: "An e-commerce store with a minimalist and modern aesthetic.", category: "Web", image: findImage('portfolio-5') },
-    { id: "proj-6", title: "Vision OS", description: "A conceptual UI for a next-generation operating system.", category: "UI/UX", image: findImage('portfolio-6') },
 ];
 
 export const storeProducts: Product[] = [

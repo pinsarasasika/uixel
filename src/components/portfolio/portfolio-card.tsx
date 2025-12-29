@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/types";
+import { PortfolioProject } from "@/types";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight } from "lucide-react";
 
 type PortfolioCardProps = {
-  project: Project;
+  project: PortfolioProject;
 };
 
 export function PortfolioCard({ project }: PortfolioCardProps) {
@@ -14,11 +14,10 @@ export function PortfolioCard({ project }: PortfolioCardProps) {
     <Card className="group relative overflow-hidden rounded-2xl bg-background/50 border-primary/10">
       <Link href={`/portfolio/${project.id}`}>
         <Image
-          src={project.image.src}
+          src={project.imageUrl}
           alt={project.title}
-          width={project.image.width}
-          height={project.image.height}
-          data-ai-hint={project.image.hint}
+          width={600}
+          height={400}
           className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />

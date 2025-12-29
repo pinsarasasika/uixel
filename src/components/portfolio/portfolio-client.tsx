@@ -2,19 +2,23 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { Project, ProjectCategory } from "@/types";
-import { portfolioProjects } from "@/lib/data";
+import { PortfolioProject, ProjectCategory } from "@/types";
 import { PortfolioCard } from "./portfolio-card";
 
-const categories: ProjectCategory[] = ["Web", "UI/UX", "AI", "Branding"];
-const allCategories: ProjectCategory[] = Array.from(new Set(portfolioProjects.map(p => p.category)));
+const allCategories: ProjectCategory[] = ["Web", "UI/UX", "AI", "Branding"];
 
+export function PortfolioClient({
+  isPreview = false,
+  projects,
+}: {
+  isPreview?: boolean;
+  projects: PortfolioProject[];
+}) {
+  const [activeCategory, setActiveCategory] =
+    useState<ProjectCategory | "All">("All");
 
-export function PortfolioClient({ isPreview = false }: { isPreview?: boolean }) {
-  const [activeCategory, setActiveCategory] = useState<ProjectCategory | "All">("All");
+  const projectsToShow = isPreview ? projects.slice(0, 3) : projects;
 
-  const projectsToShow = isPreview ? portfolioProjects.slice(0, 3) : portfolioProjects;
-  
   const filteredProjects =
     activeCategory === "All"
       ? projectsToShow
@@ -43,7 +47,11 @@ export function PortfolioClient({ isPreview = false }: { isPreview?: boolean }) 
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredProjects.map((project, index) => (
-          <div key={project.id} className="animate-in fade-in slide-in-from-bottom-12 duration-1000" style={{animationDelay: `${index * 100}ms`}}>
+          <div
+            key={project.id}
+            className="animate-in fade-in slide-in-from-bottom-12 duration-1000"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
             <PortfolioCard project={project} />
           </div>
         ))}
