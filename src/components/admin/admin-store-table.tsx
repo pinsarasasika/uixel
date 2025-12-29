@@ -78,13 +78,6 @@ export function AdminStoreTable({
         requestResourceData: sampleStoreProducts,
       });
       errorEmitter.emit('permission-error', contextualError);
-
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description:
-          error.message || 'Could not seed the database. Check permissions.',
-      });
     } finally {
       setIsSeeding(false);
     }
@@ -193,5 +186,3 @@ export function AdminStoreTable({
     </div>
   );
 }
-
-    
