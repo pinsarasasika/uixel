@@ -1,13 +1,23 @@
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Target, Vision } from "lucide-react";
+import { Target, Eye } from "lucide-react";
 
 export default function AboutPage() {
     const aboutHeroImage = PlaceHolderImages.find(img => img.id === 'about-hero')!;
-    const urlParts = aboutHeroImage.imageUrl.split('/');
-    const width = urlParts[urlParts.length - 2];
-    const height = urlParts[urlParts.length - 1];
+    
+    let width: number, height: number;
+
+    if (aboutHeroImage.imageUrl.includes('images.unsplash.com')) {
+        const url = new URL(aboutHeroImage.imageUrl);
+        width = parseInt(url.searchParams.get('w') || '1200');
+        height = parseInt(url.searchParams.get('h') || '800');
+    } else {
+        const urlParts = aboutHeroImage.imageUrl.split('/');
+        width = parseInt(urlParts[urlParts.length - 2]);
+        height = parseInt(urlParts[urlParts.length - 1]);
+    }
+
 
   return (
     <div className="container py-20 md:py-24">
@@ -22,8 +32,8 @@ export default function AboutPage() {
         <Image
           src={aboutHeroImage.imageUrl}
           alt="UIXEL Team"
-          width={parseInt(width)}
-          height={parseInt(height)}
+          width={width}
+          height={height}
           data-ai-hint={aboutHeroImage.imageHint}
           className="w-full h-auto object-cover"
         />
@@ -47,7 +57,7 @@ export default function AboutPage() {
          <Card className="bg-background/50 border-accent/10 animate-in fade-in slide-in-from-right-12 duration-1000">
             <CardHeader className="flex flex-row items-center gap-4">
                 <div className="p-3 bg-accent/10 rounded-lg border border-accent/20">
-                    <Vision className="w-6 h-6 text-accent" />
+                    <Eye className="w-6 h-6 text-accent" />
                 </div>
                 <CardTitle className="text-2xl font-semibold">Our Vision</CardTitle>
             </CardHeader>
