@@ -16,16 +16,18 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { useFirestore } from '@/firebase';
+import { useFirestore, useStorage } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Upload } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { uploadImage } from '@/firebase/storage';
+import Image from 'next/image';
 
 const formSchema = z.object({
   title: z.string().min(2, 'Title must be at least 2 characters.'),
   description: z.string().min(10, 'Description must be at least 10 characters.'),
   category: z.enum(["Web", "UI/UX", "AI", "Branding"]),
-  imageUrl: z.string().url('Please enter a valid image URL.'),
+  image: z.instanceof(File).refine(file => file.size > 0, 'Please select an image.'),
   projectUrl: z.string().url('Please enter a valid project URL.'),
 });
 
@@ -39,25 +41,34 @@ export function PortfolioForm({ onSave }: PortfolioFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const firestore = useFirestore();
+  const storage = useStorage();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<PortfolioFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
       description: '',
-      imageUrl: `https://picsum.photos/seed/${Math.random()}/600/400`,
       projectUrl: '#',
       category: 'Web'
     },
   });
 
   async function onSubmit(data: PortfolioFormValues) {
-    if(!firestore) return;
+    if(!firestore || !storage) return;
 
     setIsSubmitting(true);
     try {
+        const imageUrl = await uploadImage(storage, data.image, 'portfolio-images');
+
         const collectionRef = collection(firestore, 'portfolioProjects');
-        await addDoc(collectionRef, data);
+        await addDoc(collectionRef, {
+            title: data.title,
+            description: data.description,
+            category: data.category,
+            projectUrl: data.projectUrl,
+            imageUrl: imageUrl,
+        });
 
         toast({
             title: 'Project Saved!',
@@ -128,19 +139,38 @@ export function PortfolioForm({ onSave }: PortfolioFormProps) {
             </FormItem>
           )}
         />
-        <div className="p-4 border rounded-md bg-muted/50">
-            <p className="text-sm text-muted-foreground">
-                For now, please provide a URL for the image. We'll add a direct image upload feature soon! Use a service like <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className='underline'>Unsplash</a> or <a href="https://picsum.photos" target="_blank" rel="noopener noreferrer" className='underline'>Picsum Photos</a>.
-            </p>
-        </div>
-        <FormField
+         <FormField
           control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
+          name="image"
+          render={({ field: { onChange, value, ...rest } }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Project Image</FormLabel>
               <FormControl>
-                <Input placeholder="https://picsum.photos/seed/project/600/400" {...field} />
+                <div className="flex items-center gap-4">
+                  <Button asChild variant="outline">
+                    <label htmlFor="image-upload" className="cursor-pointer">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload Image
+                    </label>
+                  </Button>
+                  <Input
+                    id="image-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        onChange(file);
+                        setImagePreview(URL.createObjectURL(file));
+                      }
+                    }}
+                    {...rest}
+                  />
+                  {imagePreview && (
+                      <Image src={imagePreview} alt="Image preview" width={80} height={80} className="rounded-md object-cover" />
+                  )}
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -16,15 +16,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { useFirestore } from '@/firebase';
+import { useFirestore, useStorage } from '@/firebase';
 import { addDoc, collection } from 'firebase/firestore';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Upload } from 'lucide-react';
+import { uploadImage } from '@/firebase/storage';
+import Image from 'next/image';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   description: z.string().min(10, 'Description must be at least 10 characters.'),
   price: z.coerce.number().min(0, 'Price must be a positive number.'),
-  imageUrl: z.string().url('Please enter a valid image URL.'),
+  image: z.instanceof(File).refine(file => file.size > 0, 'Please select an image.'),
   livePreviewUrl: z.string().url('Please enter a valid live preview URL.'),
   category: z.string().min(2, "Category must be at least 2 characters."),
 });
@@ -39,6 +41,8 @@ export function ProductForm({ onSave }: ProductFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const firestore = useFirestore();
+  const storage = useStorage();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
@@ -46,19 +50,26 @@ export function ProductForm({ onSave }: ProductFormProps) {
       name: '',
       description: '',
       price: 0,
-      imageUrl: 'https://picsum.photos/seed/product/600/400',
       livePreviewUrl: '#',
       category: 'Template'
     },
   });
 
   async function onSubmit(data: ProductFormValues) {
-    if(!firestore) return;
+    if(!firestore || !storage) return;
 
     setIsSubmitting(true);
     try {
+        const imageUrl = await uploadImage(storage, data.image, 'product-images');
         const collectionRef = collection(firestore, 'websiteTemplates');
-        await addDoc(collectionRef, data);
+        await addDoc(collectionRef, {
+            name: data.name,
+            description: data.description,
+            price: data.price,
+            livePreviewUrl: data.livePreviewUrl,
+            category: data.category,
+            imageUrl: imageUrl,
+        });
 
         toast({
             title: 'Product Saved!',
@@ -119,19 +130,51 @@ export function ProductForm({ onSave }: ProductFormProps) {
             </FormItem>
           )}
         />
-        <div className="p-4 border rounded-md bg-muted/50">
-            <p className="text-sm text-muted-foreground">
-                For now, please provide a URL for the image. We'll add a direct image upload feature soon! Use a service like <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className='underline'>Unsplash</a> or <a href="https://picsum.photos" target="_blank" rel="noopener noreferrer" className='underline'>Picsum Photos</a>.
-            </p>
-        </div>
-        <FormField
+         <FormField
           control={form.control}
-          name="imageUrl"
+          name="image"
+          render={({ field: { onChange, value, ...rest } }) => (
+            <FormItem>
+              <FormLabel>Product Image</FormLabel>
+              <FormControl>
+                <div className="flex items-center gap-4">
+                  <Button asChild variant="outline">
+                    <label htmlFor="product-image-upload" className="cursor-pointer">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload Image
+                    </label>
+                  </Button>
+                  <Input
+                    id="product-image-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        onChange(file);
+                        setImagePreview(URL.createObjectURL(file));
+                      }
+                    }}
+                    {...rest}
+                  />
+                  {imagePreview && (
+                      <Image src={imagePreview} alt="Image preview" width={80} height={80} className="rounded-md object-cover" />
+                  )}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="livePreviewUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Live Preview URL</FormLabel>
               <FormControl>
-                <Input placeholder="https://picsum.photos/seed/product/600/400" {...field} />
+                <Input placeholder="https://example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
